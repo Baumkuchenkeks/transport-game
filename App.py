@@ -1,7 +1,8 @@
 from __future__ import annotations
 import pygame
 from pygame.locals import *
-import Constants
+from modules.Constants import Constants
+from modules.Entities.Vehicle import Vehicle
 
 class App:
     TITLE = "transport-game"
@@ -9,40 +10,49 @@ class App:
 
     width: int = 1920
     height: int = 1080
-    constantHelper: Constants = Constants.Constants()
-    background = constantHelper.getColor("GREEN")
+    constantHelper: Constants = Constants()
+    background = constantHelper.getColor("BLACK")
     screen: pygame.Surface
     running: bool
     flags: int
+    truck: Vehicle = Vehicle(30, 5, 90, False, 150)
+    helicopter: Vehicle = Vehicle(30, 10,  150, True, 50, [5, 5])
+    spriteGroup: pygame.sprite.Group
 
-    def __init__(self):
+    def __init__(self: App):
         pygame.init()
         self.flags = RESIZABLE
-        App.screen = pygame.display.set_mode((App.width, App.height), self.flags)
-        pygame.display.set_caption("|".join((App.TITLE, App.VERSION)))
-        App.running = True
+        self.screen =App.screen = pygame.display.set_mode((self.width, self.height), self.flags)
+        pygame.display.set_caption("|".join((self.TITLE, self.VERSION)))
+        self.running = True
+        self.spriteGroup = pygame.sprite.Group()
+        self.spriteGroup.add(self.truck, self.helicopter)
+        
 
-    def run(self):
-        print(App.running)
-        while App.running:
+    def run(self: App):
+        while self.running:
             for event in pygame.event.get():
-                print(event)
                 if event.type == QUIT:
-                    App.running = False
+                    self.running = False
                 if event.type == KEYDOWN:
                     match event.key:
                         case pygame.K_F12:
                             self.toggle_fullscreen()
                         case pygame.K_w:
-                            App.background = App.constantHelper.getColor("CYAN")
+                            self.truck.accelerate()
                         case pygame.K_a:
-                            App.background = App.constantHelper.getColor("YELLOW")
+                            self.truck.turnLeft()
                         case pygame.K_s:
-                            App.background = App.constantHelper.getColor("MAGENTA")
+                            self.truck.decelerate()
                         case pygame.K_d:
-                            App.background = App.constantHelper.getColor("BLACK")
+                            self.truck.turnRight()
                         case _:
                             None
+            self.helicopter.moveTowards(self.truck, self)
+            self.spriteGroup.update()
+            App.screen.fill(App.background)
+            self.spriteGroup.draw(self.screen)
+            pygame.display.update()
         pygame.quit()
     
     def toggle_fullscreen(self):

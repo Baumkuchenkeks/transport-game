@@ -4,6 +4,10 @@ class Storage:
     maxAmount: int
     amount: int
 
+    def __init__(self: Storage, maxAmount: int, amount: int = 0):
+        self.amount = amount
+        self.maxAmount = maxAmount
+
     #fills the storage by a given amount
     #returns 0 or the remaining amount if too full
     def fill(self: Storage, amount: int)-> int:
