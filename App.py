@@ -73,6 +73,8 @@ class App:
                     self.fillIndicator.fill(self.helper.getColor("GREEN"))
                 else:
                     self.fillIndicator.fill(self.helper.getColor("RED"))
+            if keys[K_e]:
+                isEmptied = self.attemptEmpty(self.truck, self.homebase)
                 
             # self.helicopter.moveTowards(self.truck, self)
             self.spriteGroup.update()
@@ -107,6 +109,14 @@ class App:
         else:
             fillAmount = toFill.getStorage().getMaxAmount() - toFill.getStorage().getAmount()
             toFill.getStorage().fill(toEmpty.empty(fillAmount))
+            return True
+
+    def attemptEmpty(self: App, toEmpty: Vehicle, toFill: Storage):
+        if((toEmpty.getSpeed() > 0) or not self.helper.proximity(toFill.getRect(), toEmpty.getRect())):
+            return False
+        else:
+            emptyAmount = toEmpty.getStorage().getAmount()
+            toFill.fill(toEmpty.getStorage().empty(emptyAmount))
             return True
 
 if __name__ == '__main__':
