@@ -1,10 +1,15 @@
 from __future__ import annotations
+import pygame
 
-class Storage:
+class Storage(pygame.sprite.Sprite):
     maxAmount: int
     amount: int
 
-    def __init__(self: Storage, maxAmount: int, amount: int = 0):
+    def __init__(self: Storage, maxAmount: int, amount: int = 0, image: pygame.Surface = None):
+        if image:
+            pygame.sprite.Sprite.__init__(self)
+            self.image = image
+            self.rect = self.image.get_rect()
         self.amount = amount
         self.maxAmount = maxAmount
 

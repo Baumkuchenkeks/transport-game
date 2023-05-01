@@ -10,7 +10,8 @@ class Utility:
         "CYAN": (0, 255, 255),
         "MAGENTA": (255, 0, 255),
         "BLACK": (0, 0, 0),
-        "GRAY": (100, 100, 100)
+        "GRAY": (100, 100, 100),
+        "BROWN": (111, 73, 29)
     }
 
     def __init__(self : Utility):
@@ -26,4 +27,3 @@ class Utility:
         rotated_image = pygame.transform.rotate(image, angle)
         rect = rotated_image.get_rect(center = image.get_rect(topleft = topLeft).center)
         return [rotated_image, rect]
-        # screen.blit(rotated_image, rect.topleft)

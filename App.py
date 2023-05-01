@@ -3,20 +3,25 @@ import pygame
 from pygame.locals import *
 from modules.Utils import Utility
 from modules.Entities.Vehicle import Vehicle
+from modules.Entities.Storage import Storage
 
 class App:
     TITLE = "transport-game"
     VERSION = "0.01-07042023"
 
-    fps: int = 60
+    MINESTORAGE = 3000
+    FPS: int = 60
+
     width: int = 1920
     height: int = 1080
     constantHelper: Utility = Utility()
-    background = constantHelper.getColor("BLACK")
+    background = constantHelper.getColor("BROWN")
     screen: pygame.Surface
     running: bool
     flags: int
-    truck: Vehicle = Vehicle(30, 0.1, 9, False, 150)
+    truck: Vehicle
+    mine: Storage
+    homebase: Storage
     # helicopter: Vehicle = Vehicle(30, 0.6,  15, True, 50, [5, 5])
     spriteGroup: pygame.sprite.Group
     clock = pygame.time.Clock()
@@ -27,14 +32,26 @@ class App:
         self.screen = pygame.display.set_mode((self.width, self.height), self.flags)
         pygame.display.set_caption("|".join((self.TITLE, self.VERSION)))
         self.running = True
+
+        self.createSprites()
+
+    def createSprites(self : App):
+        self.truck = Vehicle(30, 0.1, 9, False, 150)
+        image = pygame.image.load("data/images/mine.png")
+        self.mine = Storage(self.MINESTORAGE, self.MINESTORAGE, image)
+        self.mine.rect = self.mine.rect.move(5,5)
+        image = pygame.image.load("data/images/home.png")
+        self.homebase = Storage(self.MINESTORAGE, image = image)
+        self.homebase.rect = self.homebase.rect.move(1500,730)
+
         self.spriteGroup = pygame.sprite.Group()
-        self.spriteGroup.add(self.truck)
-        
+        self.spriteGroup.add(self.truck, self.mine, self.homebase)
 
     def run(self: App):
         while self.running:
-            self.clock.tick(self.fps)
+            self.clock.tick(self.FPS)
             for event in pygame.event.get():
+                print(event)
                 if event.type == QUIT:
                     self.running = False
 
@@ -74,41 +91,3 @@ class App:
 
 if __name__ == '__main__':
     App().run()
-
-
-
-
-
-# screen = pygame.display.set_mode((width, height)) #Surface object
-# pygame.display.set_caption("|".join((TITLE, VERSION)))
-
-# ball = pygame.image.load("data/images/ball.gif")
-# rect = ball.get_rect()
-# speed = [2, 2]
-
-# while True:
-#     for event in pygame.event.get():
-#         print(event)
-#         if event.type == QUIT:
-#             pygame.quit()
-#         if event.type == KEYDOWN:
-#             match event.key:
-#                 case pygame.K_w:
-#                     background = constantHelper.getColor("CYAN")
-#                 case pygame.K_a:
-#                     background = constantHelper.getColor("YELLOW")
-#                 case pygame.K_s:
-#                     background = constantHelper.getColor("MAGENTA")
-#                 case pygame.K_d:
-#                     background = constantHelper.getColor("BLACK")
-#                 case _:
-#                     None
-#     rect = rect.move(speed)
-#     if rect.left < 0 or rect.right > width:
-#         speed[0] = -speed[0]
-#     if rect.top < 0 or rect.bottom > height:
-#         speed[1] = -speed[1]
-#     screen.fill(background)
-#     pygame.draw.rect(screen, constantHelper.getColor("RED"), rect, 1)
-#     screen.blit(ball, rect)
-#     pygame.display.update()
