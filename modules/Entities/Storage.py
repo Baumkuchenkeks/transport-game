@@ -13,6 +13,15 @@ class Storage(pygame.sprite.Sprite):
         self.amount = amount
         self.maxAmount = maxAmount
 
+    def getRect(self: Storage):
+        return self.rect
+
+    def getAmount(self: Storage):
+        return self.amount
+
+    def getMaxAmount(self: Storage):
+        return self.maxAmount
+
     #fills the storage by a given amount
     #returns 0 or the remaining amount if too full
     def fill(self: Storage, amount: int)-> int:

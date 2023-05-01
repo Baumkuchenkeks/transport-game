@@ -27,3 +27,8 @@ class Utility:
         rotated_image = pygame.transform.rotate(image, angle)
         rect = rotated_image.get_rect(center = image.get_rect(topleft = topLeft).center)
         return [rotated_image, rect]
+
+    def proximity(self: Utility, rect1: pygame.Rect, rect2: pygame.Rect):
+        rect1Inflated = rect1.inflate(20, 20)
+        rect2Inflated = rect2.inflate(20, 20)
+        return rect2Inflated.colliderect(rect1Inflated)

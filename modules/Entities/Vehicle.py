@@ -25,10 +25,8 @@ class Vehicle(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         if(isFlying):
             self.image = self.rotationImage = pygame.image.load("data/images/heli.png")
-            # self.image.fill(Utility().getColor("GREEN"))
         else:
             self.image = self.rotationImage = pygame.image.load("data/images/truck-small.png")
-            # self.image.fill(Utility().getColor("RED"))
         self.rect = self.rotationRect = self.image.get_rect()
         self.rect = self.rotationRect = self.rect.move(1580, 850)
         self.direction = -45
@@ -48,6 +46,15 @@ class Vehicle(pygame.sprite.Sprite):
         y = math.sin(rad) * self.speed
         self.rect = self.rect.move(-x, y)
         self.rotationRect = self.rotationRect.move(-x, y)
+
+    def getSpeed(self: Vehicle):
+        return self.speed
+
+    def getRect(self: Vehicle):
+        return self.rect
+
+    def getStorage(self: Vehicle):
+        return self.storage
 
     def accelerate(self: Vehicle):
         self.speed = min(self.speed + self.acceleration, self.maxSpeed)
