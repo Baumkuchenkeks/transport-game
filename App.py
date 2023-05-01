@@ -16,8 +16,8 @@ class App:
     screen: pygame.Surface
     running: bool
     flags: int
-    truck: Vehicle = Vehicle(30, 5, 90, False, 150)
-    helicopter: Vehicle = Vehicle(30, 10,  150, True, 50, [5, 5])
+    truck: Vehicle = Vehicle(30, 0.1, 9, False, 150)
+    # helicopter: Vehicle = Vehicle(30, 0.6,  15, True, 50, [5, 5])
     spriteGroup: pygame.sprite.Group
     clock = pygame.time.Clock()
 
@@ -28,7 +28,7 @@ class App:
         pygame.display.set_caption("|".join((self.TITLE, self.VERSION)))
         self.running = True
         self.spriteGroup = pygame.sprite.Group()
-        self.spriteGroup.add(self.truck, self.helicopter)
+        self.spriteGroup.add(self.truck)
         
 
     def run(self: App):
@@ -43,12 +43,14 @@ class App:
                 self.truck.turnLeft()
             if keys[K_d]:
                 self.truck.turnRight()
-            if keys[K_w]:
-                self.truck.accelerate()
             if keys[K_s]:
+                self.truck.brake()
+            elif keys[K_w]:
+                self.truck.accelerate()
+            else:
                 self.truck.decelerate()
                 
-            self.helicopter.moveTowards(self.truck, self)
+            # self.helicopter.moveTowards(self.truck, self)
             self.spriteGroup.update()
             self.screen.fill(self.background)
             self.spriteGroup.draw(self.screen)
