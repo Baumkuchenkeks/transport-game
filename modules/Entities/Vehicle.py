@@ -24,13 +24,13 @@ class Vehicle(pygame.sprite.Sprite):
         if(isFlying):
             width = 50
             height = 50
-            self.image = self.rotationImage = pygame.Surface([width, height])
-            self.image.fill(Utility().getColor("GREEN"))
+            self.image = self.rotationImage = pygame.image.load("data/images/heli.png")
+            # self.image.fill(Utility().getColor("GREEN"))
         else:
             width = 100
             height = 50
-            self.image = self.rotationImage = pygame.Surface([width, height])
-            self.image.fill(Utility().getColor("RED"))
+            self.image = self.rotationImage = pygame.image.load("data/images/truck-small.png")
+            # self.image.fill(Utility().getColor("RED"))
         self.rect = self.rotationRect = self.image.get_rect()
     
         self.weight = weight
