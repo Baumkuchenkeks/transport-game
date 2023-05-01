@@ -8,6 +8,7 @@ class App:
     TITLE = "transport-game"
     VERSION = "0.01-07042023"
 
+    fps: int = 60
     width: int = 1920
     height: int = 1080
     constantHelper: Constants = Constants()
@@ -18,6 +19,7 @@ class App:
     truck: Vehicle = Vehicle(30, 5, 90, False, 150)
     helicopter: Vehicle = Vehicle(30, 10,  150, True, 50, [5, 5])
     spriteGroup: pygame.sprite.Group
+    clock = pygame.time.Clock()
 
     def __init__(self: App):
         pygame.init()
@@ -31,6 +33,7 @@ class App:
 
     def run(self: App):
         while self.running:
+            self.clock.tick(self.fps)
             for event in pygame.event.get():
                 if event.type == QUIT:
                     self.running = False
