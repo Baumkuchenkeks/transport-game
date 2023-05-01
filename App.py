@@ -1,7 +1,7 @@
 from __future__ import annotations
 import pygame
 from pygame.locals import *
-from modules.Constants import Constants
+from modules.Utils import Utility
 from modules.Entities.Vehicle import Vehicle
 
 class App:
@@ -11,7 +11,7 @@ class App:
     fps: int = 60
     width: int = 1920
     height: int = 1080
-    constantHelper: Constants = Constants()
+    constantHelper: Utility = Utility()
     background = constantHelper.getColor("BLACK")
     screen: pygame.Surface
     running: bool
@@ -24,7 +24,7 @@ class App:
     def __init__(self: App):
         pygame.init()
         self.flags = RESIZABLE
-        self.screen =App.screen = pygame.display.set_mode((self.width, self.height), self.flags)
+        self.screen = pygame.display.set_mode((self.width, self.height), self.flags)
         pygame.display.set_caption("|".join((self.TITLE, self.VERSION)))
         self.running = True
         self.spriteGroup = pygame.sprite.Group()
@@ -37,23 +37,20 @@ class App:
             for event in pygame.event.get():
                 if event.type == QUIT:
                     self.running = False
-                if event.type == KEYDOWN:
-                    match event.key:
-                        case pygame.K_F12:
-                            self.toggle_fullscreen()
-                        case pygame.K_w:
-                            self.truck.accelerate()
-                        case pygame.K_a:
-                            self.truck.turnLeft()
-                        case pygame.K_s:
-                            self.truck.decelerate()
-                        case pygame.K_d:
-                            self.truck.turnRight()
-                        case _:
-                            None
+
+            keys = pygame.key.get_pressed()
+            if keys[K_a]:
+                self.truck.turnLeft()
+            if keys[K_d]:
+                self.truck.turnRight()
+            if keys[K_w]:
+                self.truck.accelerate()
+            if keys[K_s]:
+                self.truck.decelerate()
+                
             self.helicopter.moveTowards(self.truck, self)
             self.spriteGroup.update()
-            App.screen.fill(App.background)
+            self.screen.fill(self.background)
             self.spriteGroup.draw(self.screen)
             pygame.display.update()
         pygame.quit()

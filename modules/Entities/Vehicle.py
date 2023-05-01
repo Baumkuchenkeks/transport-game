@@ -2,7 +2,7 @@ from __future__ import annotations
 import pygame
 from .Position import Position
 from .Storage import Storage
-from ..Constants import Constants
+from ..Utils import Utility
 # from ..App import App
 
 
@@ -10,8 +10,11 @@ class Vehicle(pygame.sprite.Sprite):
     weight: float
     # position: Position
     speed: list[int] #[int,int]
-    acceleration: int   
-    direction: int #0-7
+    acceleration: int
+    rotationSpeed: int
+    rotationImage: pygame.Surface
+    rotationRect: pygame.Rect
+    direction: int
     maxSpeed: float
     isFlying: bool
     storage: Storage
@@ -21,14 +24,14 @@ class Vehicle(pygame.sprite.Sprite):
         if(isFlying):
             width = 50
             height = 50
-            self.image = pygame.Surface([width, height])
-            self.image.fill(Constants().getColor("GREEN"))
+            self.image = self.rotationImage = pygame.Surface([width, height])
+            self.image.fill(Utility().getColor("GREEN"))
         else:
             width = 100
             height = 50
-            self.image = pygame.Surface([width, height])
-            self.image.fill(Constants().getColor("RED"))
-        self.rect = self.image.get_rect()
+            self.image = self.rotationImage = pygame.Surface([width, height])
+            self.image.fill(Utility().getColor("RED"))
+        self.rect = self.rotationRect = self.image.get_rect()
     
         self.weight = weight
         self.acceleration = acceleration
@@ -38,9 +41,11 @@ class Vehicle(pygame.sprite.Sprite):
         self.storage = Storage(maxStorage)
         self.speed = speed
         self.direction = 2
+        self.rotationSpeed = 4
 
     def update(self: Vehicle):
         self.rect = self.rect.move(self.speed)
+        self.rotationRect = self.rotationRect.move(self.speed)
 
     def accelerate(self: Vehicle):
         print(self.speed)
@@ -117,20 +122,22 @@ class Vehicle(pygame.sprite.Sprite):
             self.speed[1] = 0
 
     def turnRight(self: Vehicle):
-        if(self.direction == 7):
-            self.direction = 0
-        else:
-            self.direction += 1
-        self.image = pygame.transform.rotate(self.image, -90)
-        self.rect = self.image.get_rect()
+        self.rotate()
+        # if(self.direction == 7):
+        #     self.direction = 0
+        # else:
+        #     self.direction += 1
+        # self.image = pygame.transform.rotate(self.image, -90)
+        # self.rect = self.image.get_rect()
     
     def turnLeft(self: Vehicle):
-        if(self.direction == 0):
-            self.direction = 7
-        else:
-            self.direction -= 1
-        self.image = pygame.transform.rotate(self.image, 90)
-        self.rect = self.image.get_rect()
+        self.rotate(left = True)
+        # if(self.direction == 0):
+        #     self.direction = 7
+        # else:
+        #     self.direction -= 1
+        # self.image = pygame.transform.rotate(self.image, 90)
+        # self.rect = self.image.get_rect()
 
     def moveTowards(self: Vehicle, sprite: pygame.sprite.Sprite, app):
         # self.rect = self.rect.move(self.speed)
@@ -138,3 +145,14 @@ class Vehicle(pygame.sprite.Sprite):
             self.speed[0] = -self.speed[0]
         if self.rect.top < 0 or self.rect.bottom > app.height:
             self.speed[1] = -self.speed[1]
+
+    def rotate(self: Vehicle, left: bool = False):
+        utility = Utility()
+        if left:
+            self.direction += self.rotationSpeed
+        else:
+            self.direction -= self.rotationSpeed
+
+        rotation = utility.rotateCenter(self.rotationImage, self.rotationRect.topleft, self.direction)
+        self.image = rotation[0]
+        self.rect = rotation[1]
