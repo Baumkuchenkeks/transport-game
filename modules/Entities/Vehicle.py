@@ -20,8 +20,11 @@ class Vehicle(pygame.sprite.Sprite):
     maxSpeed: float
     isFlying: bool
     storage: Storage
+    gas: float
+    maxGas: float
+    gasUsage: int
 
-    def __init__(self: Vehicle, weight: float, acceleration: int, maxSpeed: float, isFlying: bool, maxStorage: int):
+    def __init__(self: Vehicle, weight: float, acceleration: float, maxSpeed: float, isFlying: bool, maxStorage: int):
         pygame.sprite.Sprite.__init__(self)
         if(isFlying):
             self.image = self.rotationImage = pygame.image.load("data/images/heli.png")
@@ -39,6 +42,9 @@ class Vehicle(pygame.sprite.Sprite):
         self.storage = Storage(maxStorage)
         self.rotationSpeed = 4
         self.speed = 0
+        self.gas = 5000
+        self.maxGas = 5000
+        self.gasUsage = 3
 
     def update(self: Vehicle):
         rad = math.radians(self.direction)
@@ -46,6 +52,8 @@ class Vehicle(pygame.sprite.Sprite):
         y = math.sin(rad) * self.speed
         self.rect = self.rect.move(-x, y)
         self.rotationRect = self.rotationRect.move(-x, y)
+        self.useGas(self.gasUsage * self.acceleration)
+        self.gasUsage = 3
 
     def getSpeed(self: Vehicle):
         return self.speed
@@ -56,10 +64,27 @@ class Vehicle(pygame.sprite.Sprite):
     def getStorage(self: Vehicle):
         return self.storage
 
+    def getGas(self: Vehicle):
+        return self.gas
+
+    def setGas(self: Vehicle, gas: float):
+        self.gas = gas
+
+    def useGas(self: Vehicle, amount: float):
+        self.gas -= amount
+
+    def getMaxGas(self: Vehicle):
+        return self.maxGas
+
     def accelerate(self: Vehicle):
-        self.speed = min(self.speed + self.acceleration, self.maxSpeed)
+        self.gasUsage += 3
+        if(self.gas > 0):
+            self.speed = min(self.speed + self.acceleration, self.maxSpeed)
+        else:
+            self.decelerate
 
     def decelerate(self: Vehicle):
+        self.gasUsage -= 3
         self.speed = max(self.speed - self.acceleration / 2, 0)
 
     def brake(self: Vehicle):

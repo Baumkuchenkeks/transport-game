@@ -22,6 +22,7 @@ class App:
     truck: Vehicle
     mine: Storage
     homebase: Storage
+    gasstation: Storage
     # helicopter: Vehicle = Vehicle(30, 0.6,  15, True, 50, [5, 5])
     spriteGroup: pygame.sprite.Group
     clock = pygame.time.Clock()
@@ -43,14 +44,18 @@ class App:
         image = pygame.image.load("data/images/home.png")
         self.homebase = Storage(self.MINESTORAGE, image = image)
         self.homebase.rect = self.homebase.rect.move(1500, 730)
+        image = pygame.image.load("data/images/gasstation.png")
+        self.gasstation = Storage(0, image = image)
+        self.gasstation.rect = self.gasstation.rect.move(1300, 10)
         self.fillIndicator = pygame.Surface((100,50))
 
         self.spriteGroup = pygame.sprite.Group()
-        self.spriteGroup.add(self.truck, self.mine, self.homebase)
+        self.spriteGroup.add(self.truck, self.mine, self.homebase, self.gasstation)
 
     def run(self: App):
         isFilled: bool = False
         isEmptied: bool = False
+        isGasFilled: bool = False
 
         while self.running:
             self.clock.tick(self.FPS)
@@ -72,15 +77,23 @@ class App:
                 self.truck.decelerate()
             if keys[K_f]:
                 isEmptied = False
+                isGasFilled = False
                 isFilled = self.attemptFill(self.truck, self.mine)
             if keys[K_e]:
+                isGasFilled = False
                 isFilled = False
                 isEmptied = self.attemptEmpty(self.truck, self.homebase)
+            if keys[K_q]:
+                isFilled = False
+                isEmptied = False
+                isGasFilled = self.attemptFillGas(self.truck, self.gasstation)
 
             if isFilled:
                 self.fillIndicator.fill(self.helper.getColor("GREEN"))
             elif isEmptied:
-                    self.fillIndicator.fill(self.helper.getColor("YELLOW"))
+                self.fillIndicator.fill(self.helper.getColor("YELLOW"))
+            elif isGasFilled:
+                self.fillIndicator.fill(self.helper.getColor("CYAN"))
             else :
                 self.fillIndicator.fill(self.helper.getColor("RED"))
                 
@@ -125,6 +138,13 @@ class App:
         else:
             emptyAmount = toEmpty.getStorage().getAmount()
             toFill.fill(toEmpty.getStorage().empty(emptyAmount))
+            return True
+
+    def attemptFillGas(self: App, toFill: Vehicle, gasstation: Storage):
+        if(toFill.getSpeed() > 0 or not self.helper.proximity(toFill.getRect(), gasstation.getRect())):
+            return False
+        else:
+            toFill.setGas(toFill.getMaxGas())
             return True
 
 if __name__ == '__main__':
