@@ -49,6 +49,9 @@ class App:
         self.spriteGroup.add(self.truck, self.mine, self.homebase)
 
     def run(self: App):
+        isFilled: bool = False
+        isEmptied: bool = False
+
         while self.running:
             self.clock.tick(self.FPS)
             for event in pygame.event.get():
@@ -68,13 +71,18 @@ class App:
             else:
                 self.truck.decelerate()
             if keys[K_f]:
+                isEmptied = False
                 isFilled = self.attemptFill(self.truck, self.mine)
-                if isFilled:
-                    self.fillIndicator.fill(self.helper.getColor("GREEN"))
-                else:
-                    self.fillIndicator.fill(self.helper.getColor("RED"))
             if keys[K_e]:
+                isFilled = False
                 isEmptied = self.attemptEmpty(self.truck, self.homebase)
+
+            if isFilled:
+                self.fillIndicator.fill(self.helper.getColor("GREEN"))
+            elif isEmptied:
+                    self.fillIndicator.fill(self.helper.getColor("YELLOW"))
+            else :
+                self.fillIndicator.fill(self.helper.getColor("RED"))
                 
             # self.helicopter.moveTowards(self.truck, self)
             self.spriteGroup.update()
