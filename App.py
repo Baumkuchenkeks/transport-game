@@ -3,6 +3,7 @@ import typing
 import pygame
 from pygame.locals import *
 from modules.Utils import Utility
+from modules.VehicleAi import VehicleAi
 from modules.Entities.Vehicle import Vehicle
 from modules.Entities.Storage import Storage
 from modules.Entities.Text import Text
@@ -25,13 +26,14 @@ class App:
     mine: Storage
     homebase: Storage
     gasstation: Storage
-    # helicopter: Vehicle = Vehicle(30, 0.6,  15, True, 50, [5, 5])
+    helicopter: Vehicle
     spriteGroup: pygame.sprite.Group
     clock = pygame.time.Clock()
     truckGasInfo: Text
     truckStorageInfo: Text
     hudelements: typing.List[Text]
     hudimages: typing.List[pygame.Surface]
+    ai: VehicleAi
 
     def __init__(self: App):
         pygame.init()
@@ -44,6 +46,8 @@ class App:
 
     def createSprites(self : App):
         self.truck = Vehicle(30, 0.1, 9, False, 150)
+        self.helicopter = Vehicle(30, 0.6,  15, True, 50)
+        self.ai = VehicleAi(self.helicopter)
         image = pygame.image.load("data/images/mine.png")
         self.mine = Storage(self.MINESTORAGE, self.MINESTORAGE, image)
         self.mine.rect = self.mine.rect.move(5,5)
@@ -53,6 +57,9 @@ class App:
         image = pygame.image.load("data/images/gasstation.png")
         self.gasstation = Storage(0, image = image)
         self.gasstation.rect = self.gasstation.rect.move(1300, 10)
+
+        self.spriteGroup = pygame.sprite.Group()
+        self.spriteGroup.add(self.truck, self.mine, self.homebase, self.gasstation)
 
         self.truckStorageInfo = Text('', pos=(1650, 1020))
         self.truckGasInfo = Text('', pos=(1800, 1020))
@@ -65,14 +72,7 @@ class App:
         self.hudimages = [(coalimg, coalpos), (gasimage, gaspos)]
 
 
-        self.spriteGroup = pygame.sprite.Group()
-        self.spriteGroup.add(self.truck, self.mine, self.homebase, self.gasstation)
-
     def run(self: App):
-        isFilled: bool = False
-        isEmptied: bool = False
-        isGasFilled: bool = False
-
         while self.running:
             self.clock.tick(self.FPS)
             for event in pygame.event.get():
@@ -97,6 +97,8 @@ class App:
                 self.attemptEmpty(self.truck, self.homebase)
             if keys[K_q]:
                 self.attemptFillGas(self.truck, self.gasstation)
+
+            self.ai.decideAction(self.truck.rect.center)
                 
             # self.helicopter.moveTowards(self.truck, self)
             self.spriteGroup.update()

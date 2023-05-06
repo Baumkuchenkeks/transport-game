@@ -4,7 +4,6 @@ import math
 from .Position import Position
 from .Storage import Storage
 from ..Utils import Utility
-# from ..App import App
 
 
 class Vehicle(pygame.sprite.Sprite):
@@ -101,6 +100,10 @@ class Vehicle(pygame.sprite.Sprite):
             self.direction += self.rotationSpeed
         else:
             self.direction -= self.rotationSpeed
+        if self.direction > 360:
+            self.direction -= 360
+        elif self.direction < -360:
+            self.direction += 360
         self.setRotation()
 
     def setRotation(self:Vehicle):
@@ -108,10 +111,3 @@ class Vehicle(pygame.sprite.Sprite):
         rotation = utility.rotateCenter(self.rotationImage, self.rotationRect.topleft, self.direction)
         self.image = rotation[0]
         self.rect = rotation[1]
-
-    def moveTowards(self: Vehicle, sprite: pygame.sprite.Sprite, app):
-        # self.rect = self.rect.move(self.speed)
-        if self.rect.left < 0 or self.rect.right > app.width:
-            self.directionalSpeed[0] = -self.directionalSpeed[0]
-        if self.rect.top < 0 or self.rect.bottom > app.height:
-            self.directionalSpeed[1] = -self.directionalSpeed[1]
