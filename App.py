@@ -1,9 +1,11 @@
 from __future__ import annotations
+import typing
 import pygame
 from pygame.locals import *
 from modules.Utils import Utility
 from modules.Entities.Vehicle import Vehicle
 from modules.Entities.Storage import Storage
+from modules.Entities.Text import Text
 
 class App:
     TITLE = "transport-game"
@@ -26,6 +28,10 @@ class App:
     # helicopter: Vehicle = Vehicle(30, 0.6,  15, True, 50, [5, 5])
     spriteGroup: pygame.sprite.Group
     clock = pygame.time.Clock()
+    truckGasInfo: Text
+    truckStorageInfo: Text
+    hudelements: typing.List[Text]
+    hudimages: typing.List[pygame.Surface]
 
     def __init__(self: App):
         pygame.init()
@@ -47,7 +53,17 @@ class App:
         image = pygame.image.load("data/images/gasstation.png")
         self.gasstation = Storage(0, image = image)
         self.gasstation.rect = self.gasstation.rect.move(1300, 10)
-        self.fillIndicator = pygame.Surface((100,50))
+
+        self.truckStorageInfo = Text('', pos=(1650, 1020))
+        self.truckGasInfo = Text('', pos=(1800, 1020))
+        self.hudelements = [self.truckGasInfo, self.truckStorageInfo]
+
+        coalimg = pygame.image.load("data/images/coalhud.png")
+        coalpos = (1608,1020)
+        gasimage = pygame.image.load("data/images/gashud.png")
+        gaspos = (1776,1020)
+        self.hudimages = [(coalimg, coalpos), (gasimage, gaspos)]
+
 
         self.spriteGroup = pygame.sprite.Group()
         self.spriteGroup.add(self.truck, self.mine, self.homebase, self.gasstation)
@@ -76,38 +92,33 @@ class App:
             else:
                 self.truck.decelerate()
             if keys[K_f]:
-                isEmptied = False
-                isGasFilled = False
-                isFilled = self.attemptFill(self.truck, self.mine)
+                self.attemptFill(self.truck, self.mine)
             if keys[K_e]:
-                isGasFilled = False
-                isFilled = False
-                isEmptied = self.attemptEmpty(self.truck, self.homebase)
+                self.attemptEmpty(self.truck, self.homebase)
             if keys[K_q]:
-                isFilled = False
-                isEmptied = False
-                isGasFilled = self.attemptFillGas(self.truck, self.gasstation)
-
-            if isFilled:
-                self.fillIndicator.fill(self.helper.getColor("GREEN"))
-            elif isEmptied:
-                self.fillIndicator.fill(self.helper.getColor("YELLOW"))
-            elif isGasFilled:
-                self.fillIndicator.fill(self.helper.getColor("CYAN"))
-            else :
-                self.fillIndicator.fill(self.helper.getColor("RED"))
+                self.attemptFillGas(self.truck, self.gasstation)
                 
             # self.helicopter.moveTowards(self.truck, self)
             self.spriteGroup.update()
+            self.updateInfos()
             self.drawStuff()
 
         pygame.quit()
 
     def drawStuff(self: App):
         self.screen.fill(self.background)
-        self.screen.blit(self.fillIndicator, (950,0))
         self.spriteGroup.draw(self.screen)
+        for element in self.hudelements:
+            element.draw(self.screen)
+        for (image,pos) in self.hudimages:
+            self.screen.blit(image, pos)
         pygame.display.update()
+
+    def updateInfos(self: App):
+        truckGas = "{} l".format(self.truck.getGas().__round__())
+        self.truckGasInfo.setText(truckGas)
+        truckStorage = "{} / {} t".format(self.truck.getStorage().getAmount(), self.truck.getStorage().getMaxAmount())
+        self.truckStorageInfo.setText(truckStorage)
     
     def toggle_fullscreen(self):
         """Toggle between full screen and windowed screen."""

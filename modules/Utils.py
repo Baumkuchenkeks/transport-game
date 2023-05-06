@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import pygame
+import typing
 
 class Utility:
     COLORS = {
@@ -17,7 +18,7 @@ class Utility:
     def __init__(self : Utility):
         return
 
-    def getColor(self : Utility, color: str):
+    def getColor(self : Utility, color: str) -> typing.List[int]:
         if(color in self.COLORS):
             return self.COLORS[color]
         else:
