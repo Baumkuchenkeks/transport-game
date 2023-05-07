@@ -33,3 +33,6 @@ class Utility:
         rect1Inflated = rect1.inflate(inflate, inflate)
         rect2Inflated = rect2.inflate(inflate, inflate)
         return rect2Inflated.colliderect(rect1Inflated)
+    
+    def distance(self: Utility, pointa: typing.Tuple[int,int], pointb: typing.Tuple[int,int]) -> float:
+        return ((pointb[0] - pointa[0])**2 + (pointb[1] - pointa[1])**2)**0.5

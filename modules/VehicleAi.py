@@ -20,6 +20,7 @@ class VehicleAi:
         self.mode = VehicleAi.MODE_HUNT
 
     def decideAction(self: VehicleAi, enemy: Vehicle) -> str:
+        self.vehicle.setGas(self.vehicle.getMaxGas()) ##AI cheats :o
         enemyPosition = enemy.getRect().center
         enemySpeed = enemy.getSpeed()
         enemydirection = enemy.getDirection()
@@ -42,10 +43,17 @@ class VehicleAi:
                 directiongoal = self.decideDirection(horizontalvertical)
                 if self.vehicle.direction == directiongoal:
                     ##decide if enemy is far enough away to accelerate TODO
-                    self.vehicle.accelerate()
-                    aimove += VehicleAi.ACCELERATE
+                    if helper.distance(self.vehicle.getRect().center, enemyPosition) > self.vehicle.getSpeed()*4:
+                        self.vehicle.accelerate()
+                        aimove += VehicleAi.ACCELERATE
+                    else:
+                        self.vehicle.brake()
+                        aimove += VehicleAi.BRAKE    
                 else:
                     aimove += self.decideTurn(directiongoal)
+                    if helper.distance(self.vehicle.getRect().center, enemyPosition) > self.vehicle.getSpeed()*3:
+                        self.vehicle.brake()
+                        aimove += VehicleAi.BRAKE
             if helper.proximity(self.vehicle.getRect(), enemy.getRect()):
                 ""
         return aimove
