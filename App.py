@@ -34,6 +34,7 @@ class App:
     hudelements: typing.List[Text]
     hudimages: typing.List[pygame.Surface]
     ai: VehicleAi
+    winAmount: int
 
     def __init__(self: App):
         pygame.init()
@@ -43,6 +44,7 @@ class App:
         self.running = True
 
         self.createSprites()
+        self.winAmount = self.mine.getMaxAmount() * 80 / 100
 
     def createSprites(self : App):
         self.truck = Vehicle(30, 0.1, 9, False, 150)
@@ -100,9 +102,18 @@ class App:
 
             print(self.ai.decideAction(self.truck))
 
-            self.spriteGroup.update()
-            self.updateInfos()
-            self.drawStuff()
+            if self.checkWinCondition():
+                self.screen.fill(self.helper.getColor("GREEN"))
+                Text('Congratulations! You win!', (800,540)).draw(self.screen)
+                pygame.display.update()
+            elif self.checkLoseCondition():
+                self.screen.fill(self.helper.getColor("RED"))
+                Text('Game over! Try again', (800,540)).draw(self.screen)
+                pygame.display.update()
+            else:
+                self.spriteGroup.update()
+                self.updateInfos()
+                self.drawStuff()
 
         pygame.quit()
 
@@ -158,6 +169,19 @@ class App:
         else:
             toFill.setGas(toFill.getMaxGas())
             return True
+        
+    def checkWinCondition(self: App) -> bool:
+        if(self.homebase.getAmount() >= self.winAmount):
+            return True
+        else:
+            return False
+
+    def checkLoseCondition(self: App) -> bool:
+        if ((self.mine.getAmount() + self.homebase.getAmount()) < self.winAmount) or (self.truck.getGas() <= 0 and not self.checkWinCondition()):
+            return True
+        else:
+            return False
+
 
 if __name__ == '__main__':
     App().run()
