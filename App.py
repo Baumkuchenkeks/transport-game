@@ -59,7 +59,7 @@ class App:
         self.gasstation.rect = self.gasstation.rect.move(1300, 10)
 
         self.spriteGroup = pygame.sprite.Group()
-        self.spriteGroup.add(self.truck, self.mine, self.homebase, self.gasstation)
+        self.spriteGroup.add(self.truck, self.mine, self.homebase, self.gasstation, self.helicopter)
 
         self.truckStorageInfo = Text('', pos=(1650, 1020))
         self.truckGasInfo = Text('', pos=(1800, 1020))
@@ -76,7 +76,7 @@ class App:
         while self.running:
             self.clock.tick(self.FPS)
             for event in pygame.event.get():
-                print(event)
+                # print(event)
                 if event.type == QUIT:
                     self.running = False
 
@@ -98,9 +98,8 @@ class App:
             if keys[K_q]:
                 self.attemptFillGas(self.truck, self.gasstation)
 
-            self.ai.decideAction(self.truck.rect.center)
-                
-            # self.helicopter.moveTowards(self.truck, self)
+            print(self.ai.decideAction(self.truck))
+
             self.spriteGroup.update()
             self.updateInfos()
             self.drawStuff()
@@ -121,7 +120,7 @@ class App:
         self.truckGasInfo.setText(truckGas)
         truckStorage = "{} / {} t".format(self.truck.getStorage().getAmount(), self.truck.getStorage().getMaxAmount())
         self.truckStorageInfo.setText(truckStorage)
-    
+
     def toggle_fullscreen(self):
         """Toggle between full screen and windowed screen."""
         self.flags ^= FULLSCREEN

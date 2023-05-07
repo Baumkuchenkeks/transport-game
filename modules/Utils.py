@@ -29,7 +29,7 @@ class Utility:
         rect = rotated_image.get_rect(center = image.get_rect(topleft = topLeft).center)
         return [rotated_image, rect]
 
-    def proximity(self: Utility, rect1: pygame.Rect, rect2: pygame.Rect):
-        rect1Inflated = rect1.inflate(20, 20)
-        rect2Inflated = rect2.inflate(20, 20)
+    def proximity(self: Utility, rect1: pygame.Rect, rect2: pygame.Rect, inflate: int = 20):
+        rect1Inflated = rect1.inflate(inflate, inflate)
+        rect2Inflated = rect2.inflate(inflate, inflate)
         return rect2Inflated.colliderect(rect1Inflated)

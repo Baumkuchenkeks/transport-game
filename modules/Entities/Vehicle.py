@@ -27,11 +27,13 @@ class Vehicle(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         if(isFlying):
             self.image = self.rotationImage = pygame.image.load("data/images/heli.png")
+            self.rect = self.rotationRect = self.image.get_rect()
+            self.rect = self.rotationRect = self.rect.move(50, 50)
         else:
             self.image = self.rotationImage = pygame.image.load("data/images/truck-small.png")
-        self.rect = self.rotationRect = self.image.get_rect()
-        self.rect = self.rotationRect = self.rect.move(1580, 850)
-        self.direction = -45
+            self.rect = self.rotationRect = self.image.get_rect()
+            self.rect = self.rotationRect = self.rect.move(1580, 850)
+        self.direction = 315
         self.setRotation()
     
         self.weight = weight
@@ -54,16 +56,16 @@ class Vehicle(pygame.sprite.Sprite):
         self.useGas(self.gasUsage * self.acceleration)
         self.gasUsage = 3
 
-    def getSpeed(self: Vehicle):
+    def getSpeed(self: Vehicle)-> float:
         return self.speed
 
-    def getRect(self: Vehicle):
+    def getRect(self: Vehicle)-> pygame.rect.Rect:
         return self.rect
 
-    def getStorage(self: Vehicle):
+    def getStorage(self: Vehicle)-> Storage:
         return self.storage
 
-    def getGas(self: Vehicle):
+    def getGas(self: Vehicle)-> float:
         return self.gas
 
     def setGas(self: Vehicle, gas: float):
@@ -72,8 +74,11 @@ class Vehicle(pygame.sprite.Sprite):
     def useGas(self: Vehicle, amount: float):
         self.gas -= amount
 
-    def getMaxGas(self: Vehicle):
+    def getMaxGas(self: Vehicle)-> float:
         return self.maxGas
+    
+    def getDirection(self: Vehicle) -> int:
+        return self.direction
 
     def accelerate(self: Vehicle):
         self.gasUsage += 3
@@ -89,20 +94,26 @@ class Vehicle(pygame.sprite.Sprite):
     def brake(self: Vehicle):
         self.speed = max(self.speed - self.acceleration * 4, 0)
 
-    def turnRight(self: Vehicle):
-        self.rotate()
+    def turnRight(self: Vehicle, max: int = None):
+        self.rotate(max = max)
     
-    def turnLeft(self: Vehicle):
-        self.rotate(left = True)
+    def turnLeft(self: Vehicle, max: int = None):
+        self.rotate(left = True, max = max)
 
-    def rotate(self: Vehicle, left: bool = False):
+    def rotate(self: Vehicle, left: bool = False, max: int = None):
         if left:
-            self.direction += self.rotationSpeed
+            if max and max < self.rotationSpeed:
+                self.direction += max
+            else:
+                self.direction += self.rotationSpeed
         else:
-            self.direction -= self.rotationSpeed
-        if self.direction > 360:
+            if max and max < self.rotationSpeed:
+                self.direction -= max
+            else:
+                self.direction -= self.rotationSpeed
+        if self.direction >= 360:
             self.direction -= 360
-        elif self.direction < -360:
+        elif self.direction <= 0:
             self.direction += 360
         self.setRotation()
 
