@@ -12,6 +12,8 @@ class VehicleAi:
     BRAKE = "Ai slowed down"
     STORAGE = "Ai stole stuff"
 
+    HOME_POSITION = [-5000, -5000]
+
     vehicle : Vehicle
     mode: str
 
@@ -51,12 +53,37 @@ class VehicleAi:
                         aimove += VehicleAi.BRAKE    
                 else:
                     aimove += self.decideTurn(directiongoal)
-                    if helper.distance(self.vehicle.getRect().center, enemyPosition) > self.vehicle.getSpeed()*3:
+                    if helper.distance(self.vehicle.getRect().center, enemyPosition) < self.vehicle.getSpeed()*10:
                         self.vehicle.brake()
                         aimove += VehicleAi.BRAKE
-            if helper.proximity(self.vehicle.getRect(), enemy.getRect()):
-                ""
+            if helper.proximity(self.vehicle.getRect(), enemy.getRect(), 0):
+                stealamount = self.vehicle.getStorage().getMaxAmount() - self.vehicle.getStorage().getAmount()
+                self.vehicle.getStorage().fill(enemy.getStorage().empty(stealamount))
+                aimove+= VehicleAi.STORAGE
+                if self.vehicle.getStorage().getAmount() > 0:
+                    self.setMode(VehicleAi.MODE_HOME)
+        ############# MODE HOME ###################
+        elif self.mode == VehicleAi.MODE_HOME:
+            print(self.vehicle.getRect().center)
+            horizontalvertical = "{}{}".format(self.enemyHorizontal(VehicleAi.HOME_POSITION[0]), self.enemyVertical(VehicleAi.HOME_POSITION[1]))
+            if horizontalvertical == "00":
+                self.vehicle.getStorage().empty(self.vehicle.getStorage().getMaxAmount())
+                self.setMode(VehicleAi.MODE_HUNT)
+            else:
+                directiongoal = self.decideDirection(horizontalvertical)
+                self.decideTurn(directiongoal)
+                if helper.distance(self.vehicle.getRect().center, VehicleAi.HOME_POSITION) > self.vehicle.getSpeed()*4:
+                    self.vehicle.accelerate()
+                else:
+                    self.vehicle.brake()
+            if helper.distance(self.vehicle.getRect().center, VehicleAi.HOME_POSITION) < 50:
+                self.vehicle.getStorage().empty(self.vehicle.getStorage().getMaxAmount())
+                self.setMode(VehicleAi.MODE_HUNT)
         return aimove
+    
+    def setMode(self: VehicleAi, mode: str) -> VehicleAi:
+        self.mode = mode
+        return self
         
     def enemyHorizontal(self: VehicleAi, enemyx) -> int:
         if(self.vehicle.rect.centerx < enemyx):
