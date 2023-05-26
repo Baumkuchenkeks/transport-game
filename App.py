@@ -1,7 +1,6 @@
 from __future__ import annotations
 import typing
 import pygame
-from pygame._sdl2 import Window
 from pygame.locals import *
 from modules.Utils import Utility
 from modules.VehicleAi import VehicleAi
@@ -40,13 +39,7 @@ class App:
     def __init__(self: App):
         pygame.init()
         self.flags = RESIZABLE
-        displayInfo = pygame.display.Info()
-        yPosition = round(displayInfo.current_h/100*2)
-        windowWidth = displayInfo.current_w/100*95
-        windowHeight = displayInfo.current_h/100*95
-        self.screen = pygame.display.set_mode((windowWidth, windowHeight), self.flags)
-        window = Window.from_display_module()
-        window.position = (0,yPosition)
+        self.screen = pygame.display.set_mode((self.width, self.height), self.flags)
         pygame.display.set_caption("|".join((self.TITLE, self.VERSION)))
         self.running = True
 
@@ -90,8 +83,6 @@ class App:
                     self.running = False
 
             keys = pygame.key.get_pressed()
-            if keys[K_ESCAPE]:
-                self.running = False
             if keys[K_a]:
                 self.truck.turnLeft()
             if keys[K_d]:
