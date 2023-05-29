@@ -40,6 +40,7 @@ class App:
     def __init__(self: App):
         pygame.init()
         self.flags = RESIZABLE
+        self.flags ^= RESIZABLE
         displayInfo = pygame.display.Info()
         yPosition = round(displayInfo.current_h/100*2)
         windowWidth = displayInfo.current_w/100*95
@@ -54,26 +55,39 @@ class App:
         self.winAmount = self.mine.getMaxAmount() * 80 / 100
 
     def createSprites(self : App):
+        scaleFactor = self.screen.get_width() / 3840
+
         self.truck = Vehicle(30, 0.1, 9, False, 150)
-        truckX = self.screen.get_width() / 100 * 87
-        truckY = self.screen.get_height() / 100 * 84
+        self.truck.image = pygame.transform.scale_by(self.truck.image, scaleFactor)
+        self.truck.rotationImage = pygame.transform.scale_by(self.truck.rotationImage, scaleFactor)
+        truckX = self.screen.get_width() / 100 * 85
+        truckY = self.screen.get_height() / 100 * 82
         self.truck.rect = self.truck.rotationRect = self.truck.rect.move(truckX, truckY)
+
         self.helicopter = Vehicle(30, 0.6,  15, True, 50)
+        self.helicopter.image = pygame.transform.scale_by(self.helicopter.image, scaleFactor)
         helicopterX = self.screen.get_width() / 100 * 5
         helicopterY = self.screen.get_height() / 100 * 5
         self.helicopter.rect = self.helicopter.rotationRect = self.helicopter.rect.move(helicopterX, helicopterY)
         self.ai = VehicleAi(self.helicopter)
+        
         image = pygame.image.load("data/images/mine.png")
+        image = pygame.transform.scale_by(image, scaleFactor)
         self.mine = Storage(self.MINESTORAGE, self.MINESTORAGE, image)
+        self.mine.image = pygame.transform.scale_by(self.mine.image, scaleFactor)
         mineX = self.screen.get_width() / 100
         mineY = self.screen.get_height() / 100
         self.mine.rect = self.mine.rect.move(mineX,mineY)
+
         image = pygame.image.load("data/images/home.png")
+        image = pygame.transform.scale_by(image, scaleFactor)
         self.homebase = Storage(self.MINESTORAGE, image = image)
         homebaseX = self.screen.get_width() - self.homebase.rect.width
         homebaseY = self.screen.get_height() - self.homebase.rect.height
         self.homebase.rect = self.homebase.rect.move(homebaseX, homebaseY)
+
         image = pygame.image.load("data/images/gasstation.png")
+        image = pygame.transform.scale_by(image, scaleFactor)
         self.gasstation = Storage(0, image = image)
         gasstationX = self.screen.get_width() - self.gasstation.rect.width
         self.gasstation.rect = self.gasstation.rect.move(gasstationX, 0)

@@ -29,7 +29,7 @@ class Vehicle(pygame.sprite.Sprite):
             self.image = self.rotationImage = pygame.image.load("data/images/heli.png")
             self.rect = self.rotationRect = self.image.get_rect()
         else:
-            self.image = self.rotationImage = pygame.image.load("data/images/truck-small.png")
+            self.image = self.rotationImage = pygame.image.load("data/images/truck.png")
             self.rect = self.rotationRect = self.image.get_rect()
         self.direction = 315
         self.setRotation()
