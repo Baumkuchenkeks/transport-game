@@ -28,11 +28,9 @@ class Vehicle(pygame.sprite.Sprite):
         if(isFlying):
             self.image = self.rotationImage = pygame.image.load("data/images/heli.png")
             self.rect = self.rotationRect = self.image.get_rect()
-            self.rect = self.rotationRect = self.rect.move(50, 50)
         else:
-            self.image = self.rotationImage = pygame.image.load("data/images/truck-small.png")
+            self.image = self.rotationImage = pygame.image.load("data/images/truck.png")
             self.rect = self.rotationRect = self.image.get_rect()
-            self.rect = self.rotationRect = self.rect.move(1580, 850)
         self.direction = 315
         self.setRotation()
     

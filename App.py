@@ -40,6 +40,7 @@ class App:
     def __init__(self: App):
         pygame.init()
         self.flags = RESIZABLE
+        self.flags ^= RESIZABLE
         displayInfo = pygame.display.Info()
         yPosition = round(displayInfo.current_h/100*2)
         windowWidth = displayInfo.current_w/100*95
@@ -54,30 +55,59 @@ class App:
         self.winAmount = self.mine.getMaxAmount() * 80 / 100
 
     def createSprites(self : App):
+        scaleFactor = self.screen.get_width() / 3840
+
         self.truck = Vehicle(30, 0.1, 9, False, 150)
+        self.truck.image = pygame.transform.scale_by(self.truck.image, scaleFactor)
+        self.truck.rotationImage = pygame.transform.scale_by(self.truck.rotationImage, scaleFactor)
+        truckX = self.screen.get_width() / 100 * 85
+        truckY = self.screen.get_height() / 100 * 82
+        self.truck.rect = self.truck.rotationRect = self.truck.rect.move(truckX, truckY)
+
         self.helicopter = Vehicle(30, 0.6,  15, True, 50)
+        self.helicopter.image = pygame.transform.scale_by(self.helicopter.image, scaleFactor)
+        helicopterX = self.screen.get_width() / 100 * 5
+        helicopterY = self.screen.get_height() / 100 * 5
+        self.helicopter.rect = self.helicopter.rotationRect = self.helicopter.rect.move(helicopterX, helicopterY)
         self.ai = VehicleAi(self.helicopter)
+        
         image = pygame.image.load("data/images/mine.png")
+        image = pygame.transform.scale_by(image, scaleFactor)
         self.mine = Storage(self.MINESTORAGE, self.MINESTORAGE, image)
-        self.mine.rect = self.mine.rect.move(5,5)
+        self.mine.image = pygame.transform.scale_by(self.mine.image, scaleFactor)
+        mineX = self.screen.get_width() / 100
+        mineY = self.screen.get_height() / 100
+        self.mine.rect = self.mine.rect.move(mineX,mineY)
+
         image = pygame.image.load("data/images/home.png")
+        image = pygame.transform.scale_by(image, scaleFactor)
         self.homebase = Storage(self.MINESTORAGE, image = image)
-        self.homebase.rect = self.homebase.rect.move(1500, 730)
+        homebaseX = self.screen.get_width() - self.homebase.rect.width
+        homebaseY = self.screen.get_height() - self.homebase.rect.height
+        self.homebase.rect = self.homebase.rect.move(homebaseX, homebaseY)
+
         image = pygame.image.load("data/images/gasstation.png")
+        image = pygame.transform.scale_by(image, scaleFactor)
         self.gasstation = Storage(0, image = image)
-        self.gasstation.rect = self.gasstation.rect.move(1300, 10)
+        gasstationX = self.screen.get_width() - self.gasstation.rect.width
+        self.gasstation.rect = self.gasstation.rect.move(gasstationX, 0)
 
         self.spriteGroup = pygame.sprite.Group()
         self.spriteGroup.add(self.truck, self.mine, self.homebase, self.gasstation, self.helicopter)
 
-        self.truckStorageInfo = Text('', pos=(1650, 1020))
-        self.truckGasInfo = Text('', pos=(1800, 1020))
+        textY = self.screen.get_height() / 100 * 97
+        gasTextX = self.screen.get_width() - 120
+        storageTextX = gasTextX - 150
+        self.truckStorageInfo = Text('', pos=(storageTextX, textY))
+        self.truckGasInfo = Text('', pos=(gasTextX, textY))
         self.hudelements = [self.truckGasInfo, self.truckStorageInfo]
 
         coalimg = pygame.image.load("data/images/coalhud.png")
-        coalpos = (1608,1020)
+        coalImgX = storageTextX - coalimg.get_width() - 5
+        coalpos = (coalImgX,textY)
         gasimage = pygame.image.load("data/images/gashud.png")
-        gaspos = (1776,1020)
+        gasimgX = gasTextX - gasimage.get_width() - 5
+        gaspos = (gasimgX,textY)
         self.hudimages = [(coalimg, coalpos), (gasimage, gaspos)]
 
 
@@ -109,7 +139,7 @@ class App:
             if keys[K_q]:
                 self.attemptFillGas(self.truck, self.gasstation)
 
-            print(self.ai.decideAction(self.truck))
+            self.ai.decideAction(self.truck)
 
             if self.checkWinCondition():
                 self.screen.fill(self.helper.getColor("GREEN"))
