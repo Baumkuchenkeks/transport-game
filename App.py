@@ -32,6 +32,8 @@ class App:
     clock = pygame.time.Clock()
     truckGasInfo: Text
     truckStorageInfo: Text
+    homeStorageInfo: Text
+    mineStorageInfo: Text
     hudelements: typing.List[Text]
     hudimages: typing.List[pygame.Surface]
     ai: VehicleAi
@@ -95,11 +97,17 @@ class App:
         self.spriteGroup = pygame.sprite.Group()
         self.spriteGroup.add(self.truck, self.mine, self.homebase, self.gasstation, self.helicopter)
 
+<<<<<<< Updated upstream
         textY = self.screen.get_height() / 100 * 97
         gasTextX = self.screen.get_width() - 120
         storageTextX = gasTextX - 150
         self.truckStorageInfo = Text('', pos=(storageTextX, textY))
         self.truckGasInfo = Text('', pos=(gasTextX, textY))
+=======
+        self.truckStorageInfo = Text('', pos=(1650, 1020))
+        self.truckGasInfo = Text('', pos=(1800, 1020))
+        self.homeStorageInfo = Text('', pos=(1800, 1020))
+>>>>>>> Stashed changes
         self.hudelements = [self.truckGasInfo, self.truckStorageInfo]
 
         coalimg = pygame.image.load("data/images/coalhud.png")
