@@ -6,6 +6,7 @@ class Storage(pygame.sprite.Sprite):
     amount: int
 
     def __init__(self: Storage, maxAmount: int, amount: int = 0, image: pygame.Surface = None):
+        """creates a new Storage"""
         if image:
             pygame.sprite.Sprite.__init__(self)
             self.image = image
@@ -22,9 +23,10 @@ class Storage(pygame.sprite.Sprite):
     def getMaxAmount(self: Storage):
         return self.maxAmount
 
-    #fills the storage by a given amount
-    #returns 0 or the remaining amount if too full
     def fill(self: Storage, amount: int)-> int:
+        """fills the storage by a given amount
+        returns 0 or the remaining amount if too full
+        """
         if(self.amount + amount <= self.maxAmount):
             self.amount += amount
             return 0
@@ -36,6 +38,9 @@ class Storage(pygame.sprite.Sprite):
     #takes a given amount out of the storage
     #returns the taken amount
     def empty(self: Storage, amount: int)-> int:
+        """takes a given amount out of the storage
+        returns the taken amount
+        """
         if(self.amount - amount >= 0):
             self.amount -= amount
             return amount

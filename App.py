@@ -13,7 +13,7 @@ class App:
     TITLE = "transport-game"
     VERSION = "0.01-07042023"
 
-    MINESTORAGE = 3000
+    MINESTORAGE = 1000
     FPS: int = 60
 
     width: int = 1920
@@ -40,6 +40,7 @@ class App:
     winAmount: int
 
     def __init__(self: App):
+        """Initializes the main class and defines its variables"""
         pygame.init()
         self.flags = RESIZABLE
         self.flags ^= RESIZABLE
@@ -57,6 +58,7 @@ class App:
         self.winAmount = self.mine.getMaxAmount() * 80 / 100
 
     def createSprites(self : App):
+        """create the games sprites"""
         scaleFactor = self.screen.get_width() / 3840
 
         self.truck = Vehicle(30, 0.1, 9, False, 150)
@@ -118,6 +120,7 @@ class App:
 
 
     def run(self: App):
+        """handles the main event loop"""
         while self.running:
             self.clock.tick(self.FPS)
             for event in pygame.event.get():
@@ -163,6 +166,10 @@ class App:
         pygame.quit()
 
     def drawStuff(self: App):
+        """draws all sprites within the self.spriteGroup
+        draws all hudelements in self.hudelements
+        draws all images in self.hudimages
+        """
         self.screen.fill(self.background)
         self.spriteGroup.draw(self.screen)
         for element in self.hudelements:
@@ -172,6 +179,7 @@ class App:
         pygame.display.update()
 
     def updateInfos(self: App):
+        """updates the infos in the various hud Texts"""
         truckGas = "{} l".format(self.truck.getGas().__round__())
         self.truckGasInfo.setText(truckGas)
         truckStorage = "{} / {} t".format(self.truck.getStorage().getAmount(), self.truck.getStorage().getMaxAmount())
@@ -197,6 +205,7 @@ class App:
         pygame.display.set_mode(self.rect.size, self.flags)
 
     def attemptFill(self: App, toFill: Vehicle, toEmpty: Storage):
+        """will fill the storage of the given Vehicle if conditions are met"""
         if((toFill.getSpeed() > 0) or not self.helper.proximity(toFill.getRect(), toEmpty.getRect())):
             return False
         else:
@@ -205,6 +214,7 @@ class App:
             return True
 
     def attemptEmpty(self: App, toEmpty: Vehicle, toFill: Storage):
+        """will empty the storage of the given Vehicle if conditions are met"""
         if((toEmpty.getSpeed() > 0) or not self.helper.proximity(toFill.getRect(), toEmpty.getRect())):
             return False
         else:
@@ -213,6 +223,7 @@ class App:
             return True
 
     def attemptFillGas(self: App, toFill: Vehicle, gasstation: Storage):
+        """will fill the gas of the given Vehicle if conditions are met"""
         if(toFill.getSpeed() > 0 or not self.helper.proximity(toFill.getRect(), gasstation.getRect())):
             return False
         else:
@@ -220,12 +231,18 @@ class App:
             return True
         
     def checkWinCondition(self: App) -> bool:
+        """returns true if the predefined win conditions are met
+        use to change to win screen
+        """
         if(self.homebase.getAmount() >= self.winAmount):
             return True
         else:
             return False
 
     def checkLoseCondition(self: App) -> bool:
+        """returns true if the predefined lose conditions are met
+        use to change to lose screen
+        """
         if ((self.mine.getAmount() + self.homebase.getAmount()) < self.winAmount) or (self.truck.getGas() <= 0 and not self.checkWinCondition()):
             return True
         else:

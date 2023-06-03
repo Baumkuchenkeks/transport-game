@@ -18,10 +18,16 @@ class VehicleAi:
     mode: str
 
     def __init__(self: VehicleAi, vehicle: Vehicle) -> None:
+        """creates a new VehicleAi"""
         self.vehicle = vehicle
         self.mode = VehicleAi.MODE_HUNT
 
     def decideAction(self: VehicleAi, enemy: Vehicle) -> str:
+        """Main logic of the Ai.
+        MODE HUNT: Follows the enemy Vehicle.
+                    Tries to steal its cargo.
+        MODE HOME: Flies off to imaginary home base.
+        """
         self.vehicle.setGas(self.vehicle.getMaxGas()) ##AI cheats :o
         enemyPosition = enemy.getRect().center
         enemySpeed = enemy.getSpeed()
@@ -84,7 +90,11 @@ class VehicleAi:
         self.mode = mode
         return self
         
-    def enemyHorizontal(self: VehicleAi, enemyx) -> int:
+    def enemyHorizontal(self: VehicleAi, enemyx: int) -> int:
+        """Returns 1 if enemy is to the left
+        Returns -1 if enemy is to the right
+        Returns 0 if x is the same
+        """
         if(self.vehicle.rect.centerx < enemyx):
             return 1
         if(self.vehicle.rect.centerx > enemyx):
@@ -99,6 +109,7 @@ class VehicleAi:
         return 0
     
     def decideTurn(self: VehicleAi, directiongoal: int) -> str:
+        """Calls turn functions on the vehicle based on given direction"""
                 ##### DECIDE HOW TO TURN #####
         maxrotation = abs(directiongoal - self.vehicle.direction)
         if self.vehicle.direction < directiongoal:
@@ -117,6 +128,7 @@ class VehicleAi:
                 return VehicleAi.TURN_LEFT
 
     def decideDirection(self: VehicleAi, matchcode: str) -> int:
+        """Translates given "xy"string code into direction in °"""
         match matchcode:
             case "01": ## enemyposition is directly down 90°
                 directiongoal = 90
