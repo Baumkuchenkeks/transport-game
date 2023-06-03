@@ -64,7 +64,6 @@ class VehicleAi:
                     self.setMode(VehicleAi.MODE_HOME)
         ############# MODE HOME ###################
         elif self.mode == VehicleAi.MODE_HOME:
-            print(self.vehicle.getRect().center)
             horizontalvertical = "{}{}".format(self.enemyHorizontal(VehicleAi.HOME_POSITION[0]), self.enemyVertical(VehicleAi.HOME_POSITION[1]))
             if horizontalvertical == "00":
                 self.vehicle.getStorage().empty(self.vehicle.getStorage().getMaxAmount())
