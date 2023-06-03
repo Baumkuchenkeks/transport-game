@@ -32,6 +32,8 @@ class App:
     clock = pygame.time.Clock()
     truckGasInfo: Text
     truckStorageInfo: Text
+    homeStorageInfo: Text
+    mineStorageInfo: Text
     hudelements: typing.List[Text]
     hudimages: typing.List[pygame.Surface]
     ai: VehicleAi
@@ -76,7 +78,7 @@ class App:
         self.mine = Storage(self.MINESTORAGE, self.MINESTORAGE, image)
         self.mine.image = pygame.transform.scale_by(self.mine.image, scaleFactor)
         mineX = self.screen.get_width() / 100
-        mineY = self.screen.get_height() / 100
+        mineY = self.screen.get_height() / 100 + 60
         self.mine.rect = self.mine.rect.move(mineX,mineY)
 
         image = pygame.image.load("data/images/home.png")
@@ -100,7 +102,11 @@ class App:
         storageTextX = gasTextX - 150
         self.truckStorageInfo = Text('', pos=(storageTextX, textY))
         self.truckGasInfo = Text('', pos=(gasTextX, textY))
-        self.hudelements = [self.truckGasInfo, self.truckStorageInfo]
+        homeTextX = homebaseX + self.homebase.getRect().width / 2
+        self.homeStorageInfo = Text('', pos=(homeTextX, homebaseY-50))
+        mineTextX = mineX + self.mine.getRect().width / 4
+        self.mineStorageInfo = Text('', pos=(mineTextX, mineY-50))
+        self.hudelements = [self.truckGasInfo, self.truckStorageInfo, self.homeStorageInfo, self.mineStorageInfo]
 
         coalimg = pygame.image.load("data/images/coalhud.png")
         coalImgX = storageTextX - coalimg.get_width() - 5
@@ -170,6 +176,10 @@ class App:
         self.truckGasInfo.setText(truckGas)
         truckStorage = "{} / {} t".format(self.truck.getStorage().getAmount(), self.truck.getStorage().getMaxAmount())
         self.truckStorageInfo.setText(truckStorage)
+        homeStorage = "{} t".format(self.homebase.getAmount())
+        self.homeStorageInfo.setText(homeStorage)
+        mineStorage = "{} t".format(self.mine.getAmount())
+        self.mineStorageInfo.setText(mineStorage)
 
     def toggle_fullscreen(self):
         """Toggle between full screen and windowed screen."""
