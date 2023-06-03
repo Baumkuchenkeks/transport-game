@@ -14,6 +14,7 @@ class Text:
     rect: pygame.rect.Rect
 
     def __init__(self: Text, text: str, pos, **options):
+        """creates a new Text"""
         helper: Utility = Utility()
         self.text = text
         self.pos = pos
@@ -35,6 +36,7 @@ class Text:
         self.rect.topleft = self.pos
 
     def draw(self: Text, screen: pygame.Surface):
+        """Draws the Text onto a given surface"""
         screen.blit(self.img, self.rect)
     
     def setText(self: Text, text: str):
