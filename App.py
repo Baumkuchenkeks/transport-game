@@ -209,7 +209,7 @@ class App:
         if((toFill.getSpeed() > 0) or not self.helper.proximity(toFill.getRect(), toEmpty.getRect())):
             return False
         else:
-            fillAmount = toFill.getStorage().getMaxAmount() - toFill.getStorage().getAmount()
+            fillAmount = min(toFill.getFillRate(), toFill.getStorage().getMaxAmount() - toFill.getStorage().getAmount())
             toFill.getStorage().fill(toEmpty.empty(fillAmount))
             return True
 
@@ -218,7 +218,7 @@ class App:
         if((toEmpty.getSpeed() > 0) or not self.helper.proximity(toFill.getRect(), toEmpty.getRect())):
             return False
         else:
-            emptyAmount = toEmpty.getStorage().getAmount()
+            emptyAmount = toEmpty.getFillRate()
             toFill.fill(toEmpty.getStorage().empty(emptyAmount))
             return True
 
@@ -243,7 +243,7 @@ class App:
         """returns true if the predefined lose conditions are met
         use to change to lose screen
         """
-        if ((self.mine.getAmount() + self.homebase.getAmount()) < self.winAmount) or (self.truck.getGas() <= 0 and not self.checkWinCondition()):
+        if ((self.mine.getAmount() + self.homebase.getAmount() + self.truck.getStorage().getAmount()) < self.winAmount) or (self.truck.getGas() <= 0 and not self.checkWinCondition()):
             return True
         else:
             return False

@@ -35,8 +35,6 @@ class Storage(pygame.sprite.Sprite):
             self.amount = self.maxAmount
             return diff
 
-    #takes a given amount out of the storage
-    #returns the taken amount
     def empty(self: Storage, amount: int)-> int:
         """takes a given amount out of the storage
         returns the taken amount
