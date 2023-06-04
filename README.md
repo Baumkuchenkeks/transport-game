@@ -20,6 +20,7 @@ If the helicopter steals 20% of your ore you lose.
 
 
 Controls:
+	exit game: ESC
 	move Truck: WASD
 	fill gas: Q
 	fill Truck: F
