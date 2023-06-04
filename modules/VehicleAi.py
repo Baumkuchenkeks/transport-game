@@ -63,16 +63,16 @@ class VehicleAi:
                         self.vehicle.brake()
                         aimove += VehicleAi.BRAKE
             if helper.proximity(self.vehicle.getRect(), enemy.getRect(), 0):
-                stealamount = self.vehicle.getStorage().getMaxAmount() - self.vehicle.getStorage().getAmount()
+                stealamount = min(self.vehicle.getFillRate(), self.vehicle.getStorage().getMaxAmount() - self.vehicle.getStorage().getAmount())
                 self.vehicle.getStorage().fill(enemy.getStorage().empty(stealamount))
                 aimove+= VehicleAi.STORAGE
-                if self.vehicle.getStorage().getAmount() > 0:
+                if self.vehicle.getStorage().getAmount() == self.vehicle.getStorage().getMaxAmount() or (enemy.getStorage().getAmount() == 0 and self.vehicle.getStorage().getAmount() > 0):
                     self.setMode(VehicleAi.MODE_HOME)
         ############# MODE HOME ###################
         elif self.mode == VehicleAi.MODE_HOME:
             horizontalvertical = "{}{}".format(self.enemyHorizontal(VehicleAi.HOME_POSITION[0]), self.enemyVertical(VehicleAi.HOME_POSITION[1]))
             if horizontalvertical == "00":
-                self.vehicle.getStorage().empty(self.vehicle.getStorage().getMaxAmount())
+                self.vehicle.getStorage().amount = 0
                 self.setMode(VehicleAi.MODE_HUNT)
             else:
                 directiongoal = self.decideDirection(horizontalvertical)
@@ -81,8 +81,8 @@ class VehicleAi:
                     self.vehicle.accelerate()
                 else:
                     self.vehicle.brake()
-            if helper.distance(self.vehicle.getRect().center, VehicleAi.HOME_POSITION) < 50:
-                self.vehicle.getStorage().empty(self.vehicle.getStorage().getMaxAmount())
+            if helper.distance(self.vehicle.getRect().center, VehicleAi.HOME_POSITION) < 90:
+                self.vehicle.getStorage().amount = 0
                 self.setMode(VehicleAi.MODE_HUNT)
         return aimove
     

@@ -7,7 +7,6 @@ from ..Utils import Utility
 
 class Vehicle(pygame.sprite.Sprite):
     weight: float
-    # position: Position
     directionalSpeed: list[int] #[int,int]
     acceleration: float
     rotationSpeed: int
@@ -21,6 +20,7 @@ class Vehicle(pygame.sprite.Sprite):
     gas: float
     maxGas: float
     gasUsage: float
+    fillRate: int
 
     def __init__(self: Vehicle, weight: float, acceleration: float, maxSpeed: float, isFlying: bool, maxStorage: int):
         """creates a new Vehicle"""
@@ -28,9 +28,11 @@ class Vehicle(pygame.sprite.Sprite):
         if(isFlying):
             self.image = self.rotationImage = pygame.image.load("data/images/heli.png")
             self.rect = self.rotationRect = self.image.get_rect()
+            self.fillRate = 10
         else:
             self.image = self.rotationImage = pygame.image.load("data/images/truck.png")
             self.rect = self.rotationRect = self.image.get_rect()
+            self.fillRate = 5
         self.direction = 315
         self.setRotation()
     
@@ -82,6 +84,9 @@ class Vehicle(pygame.sprite.Sprite):
     
     def getDirection(self: Vehicle) -> int:
         return self.direction
+    
+    def getFillRate(self:  Vehicle) -> int:
+        return self.fillRate
 
     def accelerate(self: Vehicle):
         """Increases vehicles speed up to a maximum.
